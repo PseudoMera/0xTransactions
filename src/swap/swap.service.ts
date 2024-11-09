@@ -1,26 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { CreateSwapDto } from './dto/create-swap.dto';
-import { UpdateSwapDto } from './dto/update-swap.dto';
+// import { RetrieveQuoteDTO } from './dto/retrieve-quote.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class SwapService {
-  create(createSwapDto: CreateSwapDto) {
-    return 'This action adds a new swap';
+  private apiUrl: string;
+  constructor(private readonly configService: ConfigService) {
+    // const api = this.configService.get<string>('API_BASE_URL');
   }
 
-  findAll() {
-    return `This action returns all swap`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} swap`;
-  }
-
-  update(id: number, updateSwapDto: UpdateSwapDto) {
-    return `This action updates a #${id} swap`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} swap`;
-  }
+  // async retrieveQuote(retrieveQuoteDTO: RetrieveQuoteDTO) {
+  // }
 }
