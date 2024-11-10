@@ -1,42 +1,25 @@
-import {
-  Controller,
-  // Get,
-  // Post,
-  // Body,
-  // Patch,
-  // Param,
-  // Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
 import { SwapService } from './swap.service';
-// import { CreateSwapDto } from './dto/create-swap.dto';
-// import { UpdateSwapDto } from './dto/update-swap.dto';
+import { RetrieveQuoteDTO } from './dto/retrieve-quote.dto';
+import { ExecuteSwapDTO } from './dto/execute-swap.dto';
 
 @Controller('swap')
 export class SwapController {
   constructor(private readonly swapService: SwapService) {}
 
-  // @Post()
-  // create(@Body() createSwapDto: CreateSwapDto) {
-  //   return this.swapService.create(createSwapDto);
-  // }
+  @Get()
+  retrieveQuote(@Query() retrieveQuoteDTO: RetrieveQuoteDTO) {
+    return this.swapService.retrieveQuote(retrieveQuoteDTO);
+  }
 
-  // @Get()
-  // findAll() {
-  //   return this.swapService.findAll();
-  // }
+  @Post()
+  executeSwap(@Body() executeSwapDto: ExecuteSwapDTO) {
+    console.log(executeSwapDto);
+    return this.swapService.sendTransaction(executeSwapDto);
+  }
 
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.swapService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSwapDto: UpdateSwapDto) {
-  //   return this.swapService.update(+id, updateSwapDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.swapService.remove(+id);
-  // }
+  @Get('/transaction/:txHash')
+  retrieveTransactionStatus(@Param('txHash') txHash: string) {
+    return this.swapService.retrieveTransactionStatus(txHash);
+  }
 }
