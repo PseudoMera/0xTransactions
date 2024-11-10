@@ -36,8 +36,7 @@ export class SwapService {
   async retrieveQuote(
     retrieveQuoteDTO: RetrieveQuoteDTO,
   ): Promise<RetrieveQuoteResponse> {
-    const { buyToken, chainID, sellAmount, sellToken, taker } =
-      retrieveQuoteDTO;
+    const { buyToken, sellAmount, sellToken, taker } = retrieveQuoteDTO;
 
     const response = await firstValueFrom(
       this.httpService

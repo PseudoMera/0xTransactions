@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { SwapService } from './swap.service';
 import { SwapController } from './swap.controller';
 import { HttpModule } from '@nestjs/axios';
-import { EthersService } from 'src/ethers/ethers.service';
+import { EthersModule } from 'src/ethers/ethers.module';
 
 @Module({
   imports: [
@@ -14,8 +14,9 @@ import { EthersService } from 'src/ethers/ethers.service';
         },
       }),
     }),
+    EthersModule,
   ],
   controllers: [SwapController],
-  providers: [SwapService, EthersService],
+  providers: [SwapService],
 })
 export class SwapModule {}
