@@ -18,7 +18,7 @@ describe('SwapService', () => {
           useValue: {
             get: (key: string) => {
               if (key === 'API_URL') {
-                return 'https://example.com'; // Mock API_URL value for testing
+                return 'https://example.com';
               }
               return null;
             },
