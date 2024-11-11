@@ -1,8 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { EthersService } from './ethers.service';
-import { ethers, JsonRpcProvider, TransactionResponse, Wallet } from 'ethers';
+import { JsonRpcProvider, Wallet } from 'ethers';
 import { SendTransactionDTO } from './dto/send-transaction.dto';
+import { mockEtherTxResponse } from './dummy/ether-send-transanction.dummy';
 
 describe('EthersService', () => {
   let service: EthersService;
@@ -128,56 +129,18 @@ describe('EthersService', () => {
 
   describe('getTransaction', () => {
     it('should retrieve a transaction by hash', async () => {
-      const txHash = '0xTransactionHash';
-      const mockTx: TransactionResponse = {
-        hash: txHash,
-        from: '0xSender',
-        to: '0xReceiver',
-        nonce: 0,
-        gasLimit: ethers.toBigInt(21000),
-        gasPrice: ethers.toBigInt(1000000000),
-        data: '0x',
-        value: ethers.toBigInt(1000),
-        chainId: ethers.toBigInt(1),
-        confirmations: 0,
-        blockNumber: null,
-        blockHash: null,
-        timestamp: null,
-        transactionIndex: null,
-        r: '0x',
-        s: '0x',
-        v: 1,
-        type: 2,
-        accessList: null,
-        maxFeePerGas: null,
-        maxPriorityFeePerGas: null,
-        blobVersionedHashes: [],
-        index: 0,
-        maxFeePerBlobGas: ethers.toBigInt(0),
-        provider: {} as any,
+      jest
+        .spyOn(provider, 'getTransaction')
+        .mockResolvedValue(mockEtherTxResponse);
 
-        wait: jest.fn().mockResolvedValue({}),
-        toJSON: jest.fn(),
-        isMined: jest.fn(),
-        isLegacy: jest.fn(),
-        isBerlin: jest.fn(),
-        isLondon: jest.fn(),
-        isCancun: jest.fn(),
-        getBlock: jest.fn(),
-        getTransaction: jest.fn().mockResolvedValue(null),
-        removedEvent: jest.fn(),
-        reorderedEvent: jest.fn(),
-        replaceableTransaction: jest.fn(),
+      const transaction = await service.getTransaction(
+        mockEtherTxResponse.hash,
+      );
 
-        ['#private']: {} as any,
-      } as unknown as TransactionResponse;
-
-      jest.spyOn(provider, 'getTransaction').mockResolvedValue(mockTx);
-
-      const transaction = await service.getTransaction(txHash);
-
-      expect(provider.getTransaction).toHaveBeenCalledWith(txHash);
-      expect(transaction).toEqual(mockTx);
+      expect(provider.getTransaction).toHaveBeenCalledWith(
+        mockEtherTxResponse.hash,
+      );
+      expect(transaction).toEqual(mockEtherTxResponse);
     });
 
     it('should throw an error if retrieving transaction fails', async () => {

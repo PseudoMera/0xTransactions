@@ -39,7 +39,8 @@ export class EthersService implements OnModuleInit {
         nonce: nonce,
       });
 
-      return await tx.wait();
+      const receipt = await tx.wait();
+      return receipt;
     } catch (error) {
       throw new Error(`Failed to send transaction: ${error.message}`);
     }

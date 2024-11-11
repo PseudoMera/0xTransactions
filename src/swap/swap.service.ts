@@ -12,6 +12,8 @@ import { InjectPinoLogger, PinoLogger } from 'nestjs-pino';
 import { RetrieveQuoteResponse } from './interfaces/retrieve-quote.interface';
 import { ExecuteSwapDTO } from './dto/execute-swap.dto';
 import { EthersService } from 'src/ethers/ethers.service';
+import { SendTransactionResponse } from './interfaces/send-transaction.interface';
+import { RetrieveTransactionStatusResponse } from './interfaces/retrieve-transaction-status.interface';
 @Injectable()
 export class SwapService {
   private apiUrl: string;
@@ -54,8 +56,6 @@ export class SwapService {
         })
         .pipe(
           catchError((error: AxiosError) => {
-            //@ts-expect-error fwfwewf
-            console.log(error.response?.data.data);
             throw new BadRequestException(error);
           }),
         ),
@@ -64,7 +64,9 @@ export class SwapService {
     return response.data;
   }
 
-  async sendTransaction(executeSwapDTO: ExecuteSwapDTO) {
+  async sendTransaction(
+    executeSwapDTO: ExecuteSwapDTO,
+  ): Promise<SendTransactionResponse> {
     const {
       buyToken,
       sellAmount,
@@ -93,16 +95,62 @@ export class SwapService {
         value: quote.transaction.value,
       });
 
-      return sendTxRes;
+      if (!sendTxRes) {
+        throw new BadRequestException('The transaction could not be completed');
+      }
+
+      return {
+        blockHash: sendTxRes.blockHash,
+        blockNumber: sendTxRes.blockNumber,
+        cumulativeGasUsed: sendTxRes.cumulativeGasUsed.toString(),
+        from: sendTxRes.from,
+        gasPrice: sendTxRes.gasPrice.toString(),
+        blobGasUsed: sendTxRes.blobGasUsed?.toString() ?? '',
+        blobGasPrice: sendTxRes.blobGasPrice?.toString() ?? '',
+        gasUsed: sendTxRes.gasUsed.toString(),
+        hash: sendTxRes.hash,
+        status: sendTxRes.status ?? -1,
+        to: sendTxRes.to,
+      };
     } catch (error) {
       throw new BadRequestException(error.message || 'Error executing swap');
     }
   }
 
-  async retrieveTransactionStatus(txHash: string) {
+  async retrieveTransactionStatus(
+    txHash: string,
+  ): Promise<RetrieveTransactionStatusResponse> {
     try {
       const txRes = await this.ethersService.getTransaction(txHash);
-      return txRes;
+      if (!txRes) {
+        throw new BadRequestException(
+          `The transaction ${txHash} can't be retrieved`,
+        );
+      }
+
+      return {
+        blockNumber: txRes.blockNumber ?? -1,
+        blockHash: txRes.blockHash ?? '',
+        chainId: txRes.chainId.toString(),
+        data: txRes.data,
+        from: txRes.from,
+        gasLimit: txRes.gasLimit.toString(),
+        gasPrice: txRes.gasPrice.toString(),
+        hash: txRes.hash,
+        maxFeePerGas: txRes.maxFeePerGas?.toString() ?? '',
+        maxPriorityFeePerGas: txRes.maxPriorityFeePerGas?.toString() ?? '',
+        nonce: txRes.nonce,
+        signature: {
+          networkV: Number(txRes.signature.networkV),
+          r: txRes.signature.r,
+          s: txRes.signature.s,
+          v: txRes.signature.v,
+        },
+        to: txRes.to,
+        index: txRes.index,
+        type: txRes.type,
+        value: txRes.value.toString(),
+      };
     } catch (error) {
       throw new BadRequestException(
         error.message ||
