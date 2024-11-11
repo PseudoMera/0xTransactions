@@ -14,7 +14,6 @@ export class SwapController {
 
   @Post()
   executeSwap(@Body() executeSwapDto: ExecuteSwapDTO) {
-    console.log(executeSwapDto);
     return this.swapService.sendTransaction(executeSwapDto);
   }
 
