@@ -22,7 +22,9 @@ $ docker compose up --build
 
 ### Building Dockerfile
 ```bash
-$ docker build -t {container-name} .
+$ docker build -t {image-name} .
+
+$ docker run -p 3000:3000 {image-name}
 ```
 
 ## API docs
