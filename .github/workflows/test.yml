@@ -9,6 +9,9 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+        API_URL: "http://localhost:8545"
+
     strategy:
       matrix:
         node-version: [22]
