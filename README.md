@@ -405,6 +405,7 @@ RPC_URL=https://sepolia.infura.io/v3/{your-rpc-id}
 
 - We tested using the sepolia infura RPC to make and retrieve transactions.
 - I hard coded chainId 1 in retrieveQuote. This can be easily modified by extracting the value from `retrieveQuoteDTO`, but I left as is because the 0x API supports limited chainIDs and using 1 is pretty standard.
+- The API delegates some validations to pkgs like etherjs.
 
 ## Security
 
